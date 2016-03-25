@@ -24,6 +24,10 @@
 // You can read more about the new JavaScript features here:
 // https://babeljs.io/docs/learn-es2015/
 
+import browserify from 'browserify';
+import source from 'vinyl-source-stream';
+import buffer from 'vinyl-buffer';
+import babelify from 'babelify';
 import path from 'path';
 import gulp from 'gulp';
 import del from 'del';
@@ -48,10 +52,10 @@ gulp.task('lint', () =>
 // Optimize images
 gulp.task('images', () =>
   gulp.src('app/images/**/*')
-    .pipe($.cache($.imagemin({
-      progressive: true,
-      interlaced: true
-    })))
+    // .pipe($.cache($.imagemin({
+    //   progressive: true,
+    //   interlaced: true
+    // })))
     .pipe(gulp.dest('dist/images'))
     .pipe($.size({title: 'images'}))
 );
@@ -105,23 +109,33 @@ gulp.task('styles', () => {
 // to enable ES2015 support remove the line `"only": "gulpfile.babel.js",` in the
 // `.babelrc` file.
 gulp.task('scripts', () =>
-    gulp.src([
-      // Note: Since we are not using useref in the scripts build pipeline,
-      //       you need to explicitly list your scripts here in the right order
-      //       to be correctly concatenated
-      './app/scripts/main.js'
-      // Other scripts
-    ])
-      .pipe($.newer('.tmp/scripts'))
-      .pipe($.sourcemaps.init())
-      .pipe($.babel())
-      .pipe($.sourcemaps.write())
+    // gulp.src([
+    //   // Note: Since we are not using useref in the scripts build pipeline,
+    //   //       you need to explicitly list your scripts here in the right order
+    //   //       to be correctly concatenated
+    //   './app/scripts/register-service-worker.js',
+    //   './app/scripts/sample-file-names.js',
+    //   './app/scripts/piano.js',
+    //   './app/scripts/main.js'
+    // ])
+    browserify({
+      entries: './app/scripts/main.js',
+      debug: true
+    })
+      .transform(babelify, {presets: 'es2015'})
+      .bundle()
+      .pipe(source('main.js'))
+      .pipe(buffer())
+      // .pipe($.newer('.tmp/scripts'))
+      // .pipe($.sourcemaps.init())
+      // .pipe($.babel())
+      // .pipe($.sourcemaps.write())
       .pipe(gulp.dest('.tmp/scripts'))
       .pipe($.concat('main.min.js'))
       .pipe($.uglify({preserveComments: 'some'}))
       // Output files
       .pipe($.size({title: 'scripts'}))
-      .pipe($.sourcemaps.write('.'))
+      // .pipe($.sourcemaps.write('.'))
       .pipe(gulp.dest('dist/scripts'))
 );
 
@@ -167,7 +181,7 @@ gulp.task('serve', ['scripts', 'styles'], () => {
   browserSync({
     notify: false,
     // Customize the Browsersync console logging prefix
-    logPrefix: 'WSK',
+    logPrefix: 'PRSHLZ',
     // Allow scroll syncing across breakpoints
     scrollElementMapping: ['main', '.mdl-layout'],
     // Run as an https by uncommenting 'https: true'
