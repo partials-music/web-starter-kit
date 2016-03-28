@@ -35,6 +35,9 @@ function getSound(pitchNumber) {
 }
 
 function loadSounds(pitchNumbers) {
+  if (!Array.isArray(pitchNumbers)) {
+    pitchNumbers = [pitchNumbers];
+  }
   return pitchNumbers.map(n => getSound(n));
 }
 

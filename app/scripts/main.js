@@ -1,27 +1,24 @@
-import { play, load } from './piano';
+import {playCadence} from './cadence';
+import {play} from './piano';
 
-var key = 60;
-var tempo = 2000;
-
-function chord(semitoneDistances) {
-  return semitoneDistances.map(distance => key + distance);
+var tonic = 60;
+var quarterNoteDuration = 1000; // ms
+function cadence(cadenceComplete) {
+  playCadence(tonic, quarterNoteDuration, cadenceComplete);
 }
 
-function playProgression(chords, tempo) {
-  for (var i = 0; i < chords.length; i++) {
-    let chord = chords[i];
-    setTimeout( _ => play(chord), tempo * i);
-  }
+function random() {
+  var randomPitch = tonic + Math.round(Math.random() * 12);
+  console.log(randomPitch);
+  play(randomPitch);
 }
 
-var I = chord([0, 4, 7]);
-var IV = chord([0, 5, 9]);
-var V7 = chord([-5, -1, 2]);
-var cadence = [I, IV, V7, I];
+function delayedRandom() {
+  setTimeout(random, quarterNoteDuration * 2);
+}
 
-load(I);
-load(IV);
-load(V7);
+function question() {
+  cadence(delayedRandom);
+}
 
-// give the chords time to load
-setTimeout ( _ => playProgression(cadence, tempo), 1000);
+question();

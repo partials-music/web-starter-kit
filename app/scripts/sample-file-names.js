@@ -362,7 +362,9 @@ function outOfRange(pitchNumber) {
 }
 
 function getFileName(pitchNumber) {
-  if (outOfRange(pitchNumber)) return undefined;
+  if (outOfRange(pitchNumber)) {
+    return undefined;
+  }
 
   for (var i = 0; i < FILES.length; i++) {
     var fileName = FILES[i];
@@ -385,10 +387,8 @@ function next(i) {
 
 function getClosestSample(pitchNumber) {
   var i = 0;
-  var currentPitch = pitchNumber;
   var keepGoing = true;
-  while(keepGoing) {
-
+  while (keepGoing) {
     // spiral outward from original pitch
     i = next(i);
     var fileName = getFileName(pitchNumber + i);
@@ -410,4 +410,4 @@ function getClosestSample(pitchNumber) {
   }
 }
 
-export { getClosestSample, getFileName };
+export {getClosestSample, getFileName};
